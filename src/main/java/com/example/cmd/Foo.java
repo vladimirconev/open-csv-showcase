@@ -7,10 +7,13 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Foo {
-    @CsvBindByPosition(position = 0)
-    private int id;
-    @CsvBindByPosition(position = 1)
-    private int x;
-    @CsvBindByPosition(position = 2)
-    private double sum;
+
+  @CsvBindByPosition(position = 0)
+  private int id;
+
+  @CsvBindByPosition(position = 1)
+  private int x;
+
+  @CsvBindByPosition(position = 2)
+  private double sum;
 }
