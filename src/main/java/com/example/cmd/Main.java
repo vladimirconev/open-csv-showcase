@@ -21,12 +21,12 @@ public class Main {
   private static final String SAMPLE_CSV_OUTPUT = "output_foo.csv"; // Absolute path to specific folder, otherwise CSV file will be created on same level as pom.xml
 
   private static <T> List<T> parseCSVDataToBeans(
-    final String source,
+    final String sourcePath,
     final ClassLoader classLoader,
     final Class<T> type
   ) {
     try (
-      InputStream is = classLoader.getResourceAsStream(source);
+      InputStream is = classLoader.getResourceAsStream(sourcePath);
       InputStreamReader streamReader = new InputStreamReader(is, StandardCharsets.UTF_8);
       Reader reader = new BufferedReader(streamReader)
     ) {
@@ -36,8 +36,11 @@ public class Main {
     }
   }
 
-  private static <T> void writeBeansToCSV(final String destination, final List<T> data) {
-    try (Writer writer = Files.newBufferedWriter(Paths.get(destination))) {
+  private static <T> void writeBeansToCSV(
+    final String destinationPath,
+    final List<T> data
+  ) {
+    try (Writer writer = Files.newBufferedWriter(Paths.get(destinationPath))) {
       StatefulBeanToCsv sbc = new StatefulBeanToCsvBuilder(writer)
         .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
         .withApplyQuotesToAll(false)
