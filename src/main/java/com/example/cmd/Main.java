@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -26,11 +27,16 @@ public class Main {
     final Class<T> type
   ) {
     try (
-      InputStream is = classLoader.getResourceAsStream(sourcePath);
+      InputStream is = Objects
+        .requireNonNullElse(classLoader, Thread.currentThread().getContextClassLoader())
+        .getResourceAsStream(Objects.requireNonNull(sourcePath));
       InputStreamReader streamReader = new InputStreamReader(is, StandardCharsets.UTF_8);
       Reader reader = new BufferedReader(streamReader)
     ) {
-      return new CsvToBeanBuilder(reader).withType(type).build().parse();
+      return new CsvToBeanBuilder(reader)
+        .withType(Objects.requireNonNull(type))
+        .build()
+        .parse();
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
@@ -40,12 +46,16 @@ public class Main {
     final String destinationPath,
     final List<T> data
   ) {
-    try (Writer writer = Files.newBufferedWriter(Paths.get(destinationPath))) {
+    try (
+      Writer writer = Files.newBufferedWriter(
+        Paths.get(Objects.requireNonNull(destinationPath))
+      )
+    ) {
       StatefulBeanToCsv sbc = new StatefulBeanToCsvBuilder(writer)
         .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
         .withApplyQuotesToAll(false)
         .build();
-      sbc.write(data);
+      sbc.write(Objects.requireNonNull(data));
     } catch (
       IOException | CsvDataTypeMismatchException | CsvRequiredFieldEmptyException ex
     ) {
@@ -58,8 +68,18 @@ public class Main {
     for (Boo boo : b) {
       sum = sum + boo.getY() + boo.getZ();
     }
-    int id = b.stream().map(Boo::getId).findFirst().get();
-    int x = b.stream().map(Boo::getX).findFirst().get();
+
+    int id = b.stream().mapMultiToInt(((boo, intConsumer) -> {
+      if(boo.getId() !=0){
+        intConsumer.accept(boo.getId());
+      }
+    })).findFirst().orElseThrow();
+
+    int x = b.stream().mapMultiToInt(((boo, intConsumer) -> {
+      if(boo.getX() !=0){
+        intConsumer.accept(boo.getX());
+      }
+    })).findFirst().orElseThrow();
     return new Foo(id, x, sum);
   }
 
@@ -69,9 +89,9 @@ public class Main {
 
     boos.forEach(System.out::println);
 
-    /**
-     * Do your magic here in terms of custom logic to producing output data that needs to be stored in CSV file.
-     * Just to show case it I will just do a sum of Y and Z filtered out per X of Boo class type.
+    /*
+      Do your magic here in terms of custom logic to producing output data that needs to be stored in CSV file.
+      Just to showcase it I will just do a sum of Y and Z filtered out per X of Boo class type.
      */
     List<Foo> f = new ArrayList<>();
     Map<Integer, List<Boo>> groupedByX = boos
