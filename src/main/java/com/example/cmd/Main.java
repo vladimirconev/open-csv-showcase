@@ -33,7 +33,7 @@ public class Main {
       InputStreamReader streamReader = new InputStreamReader(is, StandardCharsets.UTF_8);
       Reader reader = new BufferedReader(streamReader)
     ) {
-      return new CsvToBeanBuilder(reader)
+      return new CsvToBeanBuilder<T>(reader)
         .withType(Objects.requireNonNull(type))
         .build()
         .parse();
@@ -51,7 +51,7 @@ public class Main {
         Paths.get(Objects.requireNonNull(destinationPath))
       )
     ) {
-      StatefulBeanToCsv sbc = new StatefulBeanToCsvBuilder(writer)
+      StatefulBeanToCsv<T> sbc = new StatefulBeanToCsvBuilder<T>(writer)
         .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
         .withApplyQuotesToAll(false)
         .build();
