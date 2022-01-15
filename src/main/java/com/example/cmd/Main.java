@@ -69,17 +69,33 @@ public class Main {
       sum = sum + boo.getY() + boo.getZ();
     }
 
-    int id = b.stream().mapMultiToInt(((boo, intConsumer) -> {
-      if(boo.getId() !=0){
-        intConsumer.accept(boo.getId());
-      }
-    })).findFirst().orElseThrow();
+    int id = b
+      .stream()
+      .mapMultiToInt(
+        (
+          (boo, intConsumer) -> {
+            if (boo.getId() != 0) {
+              intConsumer.accept(boo.getId());
+            }
+          }
+        )
+      )
+      .findFirst()
+      .orElseThrow();
 
-    int x = b.stream().mapMultiToInt(((boo, intConsumer) -> {
-      if(boo.getX() !=0){
-        intConsumer.accept(boo.getX());
-      }
-    })).findFirst().orElseThrow();
+    int x = b
+      .stream()
+      .mapMultiToInt(
+        (
+          (boo, intConsumer) -> {
+            if (boo.getX() != 0) {
+              intConsumer.accept(boo.getX());
+            }
+          }
+        )
+      )
+      .findFirst()
+      .orElseThrow();
     return new Foo(id, x, sum);
   }
 

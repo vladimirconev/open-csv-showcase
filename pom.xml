@@ -7,7 +7,7 @@
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <lombok.version>1.18.20</lombok.version>
+    <lombok.version>1.18.22</lombok.version>
     <opencsv.version>5.5.2</opencsv.version>
     <plugin.prettier.goal>write</plugin.prettier.goal>
   </properties>
